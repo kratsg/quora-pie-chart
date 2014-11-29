@@ -94,7 +94,7 @@ def pie(username='Giordon-Stark'):
                                      pctdistance=0.9,
                                      counterclock=False,
                                      wedgeprops={"linewidth":0},
-                                     startangle=135,
+                                     startangle=45,
                                      radius=1.1)
   for t, c, l in zip(autotexts, fgcolors, texts):
     t.set_color(c)
