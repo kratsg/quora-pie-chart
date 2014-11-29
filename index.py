@@ -102,7 +102,7 @@ def pie(username='Giordon-Stark'):
     t.set_weight('bold')
     l.set_size('x-small')
 
-  ax.set_title(username, fontsize=36)
+  ax.set_title(''.join([i for i in username.replace('-',' ') if not i.isdigit()]), fontsize=36)
 
   show_profile = request.args.get('profile')
   if show_profile == "true" or show_profile == None or show_profile != "false":
@@ -187,7 +187,7 @@ def bar(username='Giordon-Stark'):
     yloc = rect.get_y() + rect.get_height()/2.0
     ax.text(xloc, yloc, str(width), horizontalalignment=align, verticalalignment='center', color=clr, weight='bold')
 
-  fig.suptitle(username, fontsize=36)
+  fig.suptitle(''.join([i for i in username.replace('-',' ') if not i.isdigit()]), fontsize=36)
 
   addtl_artists = []
 
