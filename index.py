@@ -1,5 +1,5 @@
 import os
-from flask import Flask, send_file, render_template
+from flask import Flask, send_file, render_template, request
 
 import brewer2mpl
 import matplotlib.pyplot as pl
@@ -22,7 +22,6 @@ def page_not_found(error):
 
 @app.errorhandler(500)
 def page_had_error(error):
-  print error
   return render_template('500.html'), 500
 
 def get_user_topics(username):
@@ -103,23 +102,25 @@ def pie(username='Giordon-Stark'):
     t.set_weight('bold')
     l.set_size('x-small')
 
-  ax.set_title(username)
+  ax.set_title(username, fontsize=36)
 
-  shift = 50
-  pro_img_width = 128
-  pro_img_height = 128
-  img = requests.get(pro_img_url)
-  profile_image = Image.open(StringIO(img.content))
-  profile_image.thumbnail((pro_img_width, pro_img_height), Image.ANTIALIAS)
-  profile_image = np.array(profile_image).astype(np.float) / 255.
-  # add profile image
-  fig.figimage(profile_image, 0 + shift, ax.bbox.ymax + 9 - shift, alpha=0.75, zorder=50)
+  show_profile = request.args.get('profile')
+  if show_profile == "true" or show_profile == None or show_profile != "false":
+    shift = 50
+    pro_img_width = 128
+    pro_img_height = 128
+    img = requests.get(pro_img_url)
+    profile_image = Image.open(StringIO(img.content))
+    profile_image.thumbnail((pro_img_width, pro_img_height), Image.ANTIALIAS)
+    profile_image = np.array(profile_image).astype(np.float) / 255.
+    # add profile image
+    fig.figimage(profile_image, 0 + shift, ax.bbox.ymax + 9 - shift, alpha=0.75, zorder=50)
 
-  if is_topWriter:
-    top_writer_image = Image.open(StringIO(requests.get('https://qsf.is.quoracdn.net/-2e1550e50db8b15f.png').content))
-    tw_img_w, tw_img_h = top_writer_image.size
-    top_writer_image = np.array(top_writer_image).astype(np.float) / 255.
-    fig.figimage(top_writer_image, 0 + shift + pro_img_width - tw_img_w, ax.bbox.ymax + 9 - shift + pro_img_height - tw_img_h, alpha=1.0, zorder=60)
+    if is_topWriter:
+      top_writer_image = Image.open(StringIO(requests.get('https://qsf.is.quoracdn.net/-2e1550e50db8b15f.png').content))
+      tw_img_w, tw_img_h = top_writer_image.size
+      top_writer_image = np.array(top_writer_image).astype(np.float) / 255.
+      fig.figimage(top_writer_image, 0 + shift + pro_img_width - tw_img_w, ax.bbox.ymax + 9 - shift + pro_img_height - tw_img_h, alpha=1.0, zorder=60)
 
   # dump into a fake filestream
   output = StringIO()
@@ -172,46 +173,47 @@ def bar(username='Giordon-Stark'):
   ax.yaxis.set_ticks_position('left')
   for spine in ['top','bottom','left','right']:
     ax.spines[spine].set_color('none')
-  ax.set_xlim((0, np.floor(np.max(topic_data[:,1].astype(int))/10)*10))
+  ax.set_xlim((0, np.ceil(topic_data[:,1].astype(int).max()/10.)*10))
   ax.set_ylim((pos.min()-barHeight/2., pos.max()+barHeight/2.))
   ax.xaxis.set_visible(False)
 
   # http://matplotlib.org/examples/pylab_examples/barchart_demo2.html
   for rect, bgcolor, fgcolor in zip(rects, bgcolors, fgcolors):
     width = int(rect.get_width())
-    if (width < 5 ):
-      xloc = width + 1
-      clr = 'black'
-      align = 'left'
-    else:
-      xloc = 0.95*width
-      clr = fgcolor
-      align = 'right'
+    xloc = width+1
+    clr = 'black'
+    align = 'left'
 
     yloc = rect.get_y() + rect.get_height()/2.0
     ax.text(xloc, yloc, str(width), horizontalalignment=align, verticalalignment='center', color=clr, weight='bold')
 
-  ax.set_title(username)
+  fig.suptitle(username, fontsize=36)
 
-  shift = 200
-  pro_img_width = 128
-  pro_img_height = 128
-  img = requests.get(pro_img_url)
-  profile_image = Image.open(StringIO(img.content))
-  profile_image.thumbnail((pro_img_width, pro_img_height), Image.ANTIALIAS)
-  profile_image = np.array(profile_image).astype(np.float) / 255.
-  # add profile image
-  fig.figimage(profile_image, ax.bbox.xmax + shift, ax.bbox.ymax - shift, alpha=0.75, zorder=50)
+  addtl_artists = []
 
-  if is_topWriter:
-    top_writer_image = Image.open(StringIO(requests.get('https://qsf.is.quoracdn.net/-2e1550e50db8b15f.png').content))
-    tw_img_w, tw_img_h = top_writer_image.size
-    top_writer_image = np.array(top_writer_image).astype(np.float) / 255.
-    fig.figimage(top_writer_image, ax.bbox.xmax + shift + pro_img_width - tw_img_w, ax.bbox.ymax - shift + pro_img_height - tw_img_h, alpha=1.0, zorder=60)
+  show_profile = request.args.get('profile')
+  if show_profile == "true" or show_profile == None or show_profile != "false":
+    shift = 140
+    pro_img_width = 128
+    pro_img_height = 128
+    img = requests.get(pro_img_url)
+    profile_image = Image.open(StringIO(img.content))
+    profile_image.thumbnail((pro_img_width, pro_img_height), Image.ANTIALIAS)
+    profile_image = np.array(profile_image).astype(np.float) / 255.
+    # add profile image
+    fig.figimage(profile_image, ax.bbox.xmax + shift, ax.bbox.ymax + shift, alpha=0.75, zorder=50)
+    foo = ax.text(1, 1.2, "_", transform=ax.transAxes, alpha=0.0)
+    addtl_artists.append(foo)
+
+    if is_topWriter:
+      top_writer_image = Image.open(StringIO(requests.get('https://qsf.is.quoracdn.net/-2e1550e50db8b15f.png').content))
+      tw_img_w, tw_img_h = top_writer_image.size
+      top_writer_image = np.array(top_writer_image).astype(np.float) / 255.
+      fig.figimage(top_writer_image, ax.bbox.xmax + shift + pro_img_width - tw_img_w, ax.bbox.ymax + shift + pro_img_height - tw_img_h, alpha=1.0, zorder=60)
 
   # dump into a fake filestream
   output = StringIO()
-  fig.savefig(output, bbox_inches='tight', transparent=False)
+  fig.savefig(output, bbox_inches='tight', transparent=False, additional_artists=addtl_artists)
   # point to the correct location for reading
   output.seek(0)
   # output as if it was a file
