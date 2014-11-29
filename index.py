@@ -122,7 +122,7 @@ def chart(username='Giordon-Stark'):
 
   # dump into a fake filestream
   output = StringIO()
-  fig.savefig(output, bbox_inches='tight', transparent=True)
+  fig.savefig(output, bbox_inches='tight', transparent=False)
   # point to the correct location for reading
   output.seek(0)
   # output as if it was a file
