@@ -46,7 +46,10 @@ def parse_user_topics(text):
     answer_box = box.find("div", {"class":"ObjectCard-body"})
     if not answer_box:
       continue
-    answer_count = int(answer_box.a.text.split(' ')[0])
+    answer_count_box = answer_box.a
+    if not answer_count_box:
+      continue
+    answer_count = int(answer_count_box.text.split(' ')[0])
     topic_data.append([topic_name, answer_count])
   return [np.array(topic_data), profile_image_url, is_topWriter]
 
@@ -62,7 +65,7 @@ def chart(username='Giordon-Stark'):
 
   topic_data, pro_img_url, is_topWriter = parse_user_topics(text)
   if topic_data.size == 0:
-    return 'We seem to not be able to find any topics for you.', 400
+    return 'We seem to not be able to find any answers for you.', 400
 
   # These are the "Tableau 20" colors as RGB.  
   tableau20 = np.array([(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),  
