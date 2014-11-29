@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head></head>
+<body>
+
+<form id="pie">
+  <label for="username">Get pie chart for https://www.quora.com/<input type="text" id="username" pattern="[a-zA-Z\-]+" title="Must be a valid Quora username" /></label>
+</form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+$('#pie').submit(function(e){
+  var username = $('#username').val();
+  e.preventDefault();
+  window.location = "/pie/"+username+".png";
+  return false;
+});
+</script>
+
+</body>
+</html>

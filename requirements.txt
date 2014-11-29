@@ -3,7 +3,9 @@ Django==1.7.1
 Flask==0.10.1
 Jinja2==2.7.3
 MarkupSafe==0.23
+Pillow==2.6.1
 Werkzeug==0.9.6
+brewer2mpl==1.4.1
 dj-database-url==0.3.0
 dj-static==0.0.6
 django-toolbelt==0.0.1
@@ -20,4 +22,5 @@ pytz==2014.10
 requests==2.4.3
 six==1.8.0
 static3==0.5.1
+tableau==0.0.3
 wsgiref==0.1.2
