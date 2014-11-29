@@ -5,9 +5,19 @@
 
 <h1>Quora Pie Chart</h1>
 <h3>Made with love by <a href="http://giordonstark.com/">Giordon Stark</a></h3>
-<form id="pie">
-  <label for="username">Get pie chart for https://www.quora.com/<input type="text" id="username" placeholder="Giordon-Stark" pattern="[a-zA-Z0-9\.\-]+" title="Must be a valid Quora username" /></label>
-</form>
+<ul>
+  <li>
+    <form id="pie">
+      <label for="pie-username">Get pie chart for https://www.quora.com/<input type="text" id="pie-username" placeholder="Giordon-Stark" pattern="[a-zA-Z0-9\.\-]+" title="Must be a valid Quora username" /></label>
+    </form>
+  </li>
+  <li>
+    <form id="bar">
+      <label for="bar-username">Get bar chart for https://www.quora.com/<input type="text" id="bar-username" placeholder="Giordon-Stark" pattern="[a-zA-Z0-9\.\-]+" title="Must be a valid Quora username" /></label>
+    </form>
+  </li>
+</ul>
+
 <h2>Many thanks to...</h2>
 <ul>
   <li>Mohan Nayaka for kickstarting the pie chart revolution and breaking our shackles</li>
@@ -19,11 +29,19 @@ This is completely inspired by his work <a href="http://quorastuff.appspot.com/G
 
 <script type="text/javascript">
 $('#pie').submit(function(e){
-  var username = $('#username').val();
+  var username = $('#pie-username').val();
   e.preventDefault();
   window.location = "/pie/"+username+".png";
   return false;
 });
+
+$('#bar').submit(function(e){
+  var username = $('#bar-username').val();
+  e.preventDefault();
+  window.location = "/bar/"+username+".png";
+  return false;
+});
+
 </script>
 
 </body>
