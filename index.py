@@ -36,6 +36,7 @@ def parse_user_topics(text):
   boxes = soup.findAll("div", {"class": "ObjectCard UserTopicPagedListItem PagedListItem"})
   profile_image_url = soup.find("img", {"class": "profile_photo_img"})['src'].encode('utf-8')
   is_topWriter = bool(soup.find("span", {"class": "CurrentTopWriterIcon TopWriterIcon"}))
+  total_answers = int(soup.find("li", {"class": "EditableListItem NavListItem NavItem AnswersNavItem not_removable"}).find("span", {"class": "profile_count"}).text)
   topic_data = []
   for box in boxes:
     topic_box = box.find("span", {"class":"TopicName"})
@@ -50,6 +51,11 @@ def parse_user_topics(text):
       continue
     answer_count = int(answer_count_box.text.split(' ')[0])
     topic_data.append([topic_name, answer_count])
+  missing_answers = total_answers - sum([topic[1] for topic in topic_data])
+  if missing_answers < 0:
+    topic_data.append(["Overcount", abs(missing_answers)])
+  else:
+    topic_data.append(["Missing", missing_answers])
   topic_data = sorted(topic_data, key=lambda x: x[1])
   return [np.array(topic_data), profile_image_url, is_topWriter]
 
@@ -96,11 +102,14 @@ def pie(username='Giordon-Stark'):
                                      wedgeprops={"linewidth":0},
                                      startangle=45,
                                      radius=1.1)
-  for t, c, l in zip(autotexts, fgcolors, texts):
+  for t, c, l, p in zip(autotexts, fgcolors, texts, patches):
     t.set_color(c)
     t.set_size('x-small')
     t.set_weight('bold')
     l.set_size('x-small')
+    if l.get_text() in ["Missing", "Overcount"]:
+      t.set_color('white')
+      p.set_facecolor('black')
 
   ax.set_title(''.join([i for i in username.replace('-',' ') if not i.isdigit()]), fontsize=36)
 
