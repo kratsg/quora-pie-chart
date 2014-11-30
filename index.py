@@ -187,11 +187,13 @@ def bar(username='Giordon-Stark'):
   ax.xaxis.set_visible(False)
 
   # http://matplotlib.org/examples/pylab_examples/barchart_demo2.html
-  for rect, bgcolor, fgcolor in zip(rects, bgcolors, fgcolors):
+  for rect, bgcolor, fgcolor, l in zip(rects, bgcolors, fgcolors, topic_data[:,0]):
     width = int(rect.get_width())
     xloc = width+1
     clr = 'black'
     align = 'left'
+    if l in ["Missing", "Overcount"]:
+      rect.set_facecolor('black')
 
     yloc = rect.get_y() + rect.get_height()/2.0
     ax.text(xloc, yloc, str(width), horizontalalignment=align, verticalalignment='center', color=clr, weight='bold')
