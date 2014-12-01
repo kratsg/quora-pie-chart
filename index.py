@@ -36,7 +36,7 @@ def parse_user_topics(text):
   boxes = soup.findAll("div", {"class": "ObjectCard UserTopicPagedListItem PagedListItem"})
   profile_image_url = soup.find("img", {"class": "profile_photo_img"})['src'].encode('utf-8')
   is_topWriter = bool(soup.find("span", {"class": "CurrentTopWriterIcon TopWriterIcon"}))
-  total_answers = int(soup.find("li", {"class": "EditableListItem NavListItem NavItem AnswersNavItem not_removable"}).find("span", {"class": "profile_count"}).text)
+  total_answers = int(soup.find("li", {"class": "EditableListItem NavListItem NavItem AnswersNavItem not_removable"}).find("span", {"class": "profile_count"}).text.replace(',',''))
   topic_data = []
   for box in boxes:
     topic_box = box.find("span", {"class":"TopicName"})
