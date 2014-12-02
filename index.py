@@ -1,5 +1,6 @@
 import os
 from flask import Flask, send_file, render_template, request
+import json
 
 import brewer2mpl
 import matplotlib.pyplot as pl
@@ -25,7 +26,11 @@ def page_had_error(error):
   return render_template('500.html'), 500
 
 def get_user_topics(username):
-  r = requests.get('http://www.quora.com/%s/topics?share=1' % username)
+  quora_cookies = json.loads(os.environ.get('QUORA_COOKIES'))
+  if quora_cookies:
+    r = requests.get('http://www.quora.com/%s/topics?share=1' % username, cookies=quora_cookies)
+  else:
+    r = requests.get('http://www.quora.com/%s/topics?share=1' % username)
   if r.status_code != 200:
     return False
   else:
@@ -34,7 +39,7 @@ def get_user_topics(username):
 def parse_user_topics(text):
   soup = BeautifulSoup(text)
   boxes = soup.findAll("div", {"class": "ObjectCard UserTopicPagedListItem PagedListItem"})
-  profile_image_url = soup.find("img", {"class": "profile_photo_img"})['src'].encode('utf-8')
+  profile_image_url = soup.find("div", {"class": "ProfilePhoto"}).find("img", {"class": "profile_photo_img"})['src'].encode('utf-8')
   is_topWriter = bool(soup.find("span", {"class": "CurrentTopWriterIcon TopWriterIcon"}))
   total_answers = int(soup.find("li", {"class": "EditableListItem NavListItem NavItem AnswersNavItem not_removable"}).find("span", {"class": "profile_count"}).text.replace(',',''))
   topic_data = []
